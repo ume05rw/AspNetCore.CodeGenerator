@@ -1,0 +1,33 @@
+@inherits Microsoft.VisualStudio.Web.CodeGeneration.Templating.RazorTemplateBase
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+@{
+    foreach (var namespaceName in Model.RequiredNamespaces)
+    {
+@:using @namespaceName;
+    }
+}
+
+namespace @(Model.ClassNamespace)
+{
+    public class @(Model.ModelName) : StoreBase<@(Model.ModelMetadata.EntitySetName)>
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="dbContext"></param>
+        public @(Model.ModelName)(
+            IServiceProvider services,
+            @(@Model.DbContextTypeName) dbContext
+        ) : base(services, dbContext, dbContext.@(Model.DbSetName))
+        {
+        }
+    }
+}

@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.0.0" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.5" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore.Design" Version="6.10.5" />
-    <PackageReference Include="XbScaffolder" Version="0.0.3-dev-7" />
+    <PackageReference Include="XbScaffolder" Version="0.0.6-dev-2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Models\Stores\" />
     <Folder Include="Models\ViewModels\" />
   </ItemGroup>
 

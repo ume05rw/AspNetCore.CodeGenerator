@@ -1,5 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿
 
 using System;
 using System.Collections.Generic;
@@ -17,14 +16,14 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Dependency;
 
 namespace XbScaffolder.Model
 {
-    public class ModelScaffolder : CommonGeneratorBase
+    public class ModelGenerator : CommonGeneratorBase
     {
         protected readonly IProjectContext _projectContext;
         protected readonly ICodeGeneratorActionsService _codeGeneratorActionsService;
         protected readonly IServiceProvider _serviceProvider;
         protected readonly ILogger _logger;
 
-        public ModelScaffolder(
+        public ModelGenerator(
             IProjectContext projectDependencyProvider,
             IApplicationInfo applicationInfo,
             ICodeGeneratorActionsService codeGeneratorActionsService,
@@ -32,35 +31,14 @@ namespace XbScaffolder.Model
             ILogger logger)
             : base(applicationInfo)
         {
-            if (projectDependencyProvider == null)
-            {
-                throw new ArgumentNullException(nameof(projectDependencyProvider));
-            }
-
-            if (applicationInfo == null)
-            {
-                throw new ArgumentNullException(nameof(applicationInfo));
-            }
-
-            if (codeGeneratorActionsService == null)
-            {
-                throw new ArgumentNullException(nameof(codeGeneratorActionsService));
-            }
-
-            if (serviceProvider == null)
-            {
-                throw new ArgumentNullException(nameof(serviceProvider));
-            }
-
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            _projectContext = projectDependencyProvider;
-            _codeGeneratorActionsService = codeGeneratorActionsService;
-            _serviceProvider = serviceProvider;
-            _logger = logger;
+            this._projectContext = projectDependencyProvider
+                ?? throw new ArgumentNullException(nameof(projectDependencyProvider));
+            this._codeGeneratorActionsService = codeGeneratorActionsService
+                ?? throw new ArgumentNullException(nameof(codeGeneratorActionsService));
+            this._serviceProvider = serviceProvider
+                ?? throw new ArgumentNullException(nameof(serviceProvider));
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public virtual IEnumerable<string> TemplateFolders
@@ -82,7 +60,7 @@ namespace XbScaffolder.Model
                 throw new ArgumentNullException(nameof(generatorModel));
             }
 
-            if (string.IsNullOrEmpty(generatorModel.ViewName))
+            if (string.IsNullOrEmpty(generatorModel.ModelName))
             {
                 throw new ArgumentException(MessageStrings.ViewNameRequired);
             }
@@ -94,13 +72,20 @@ namespace XbScaffolder.Model
 
             var outputPath = ValidateAndGetOutputPath(
                 generatorModel, 
-                outputFileName: generatorModel.ViewName + Constants.CodeFileExtension
+                outputFileName: generatorModel.ModelName + Constants.CodeFileExtension
             );
+
+            this._logger.LogMessage("ApplicationBasePath: " + this.ApplicationInfo.ApplicationBasePath);
+            this._logger.LogMessage("Model Output Path: " + outputPath);
+
+
             var layoutDependencyInstaller 
-                = ActivatorUtilities.CreateInstance<MvcLayoutDependencyInstaller>(_serviceProvider);
+                = ActivatorUtilities.CreateInstance<MvcLayoutDependencyInstaller>(this._serviceProvider);
+
             await layoutDependencyInstaller.Execute();
 
-            await GenerateModel(generatorModel, null, outputPath);
+            await this.GenerateModel(generatorModel, null, outputPath);
+
             await layoutDependencyInstaller.InstallDependencies();
         }
 
@@ -109,47 +94,18 @@ namespace XbScaffolder.Model
             ModelTypeAndContextModel modelTypeAndContextModel, 
             string outputPath)
         {
-            var templateModel = GetModelGeneratorTemplateModel(
-                generatorModel, 
-                modelTypeAndContextModel
-            );
             var templateName = generatorModel.TemplateName + Constants.RazorTemplateExtension;
             await _codeGeneratorActionsService.AddFileFromTemplateAsync(
                 outputPath, 
                 templateName, 
-                TemplateFolders, 
-                templateModel
+                TemplateFolders,
+                generatorModel
             );
-            _logger.LogMessage("Added Model : " 
-                               + outputPath.Substring(ApplicationInfo.ApplicationBasePath.Length));
+            this._logger.LogMessage("Added Model : " 
+                                    + outputPath.Substring(ApplicationInfo.ApplicationBasePath.Length));
 
             await AddRequiredFiles(generatorModel);
         }
-
-        protected ViewGeneratorTemplateModel GetModelGeneratorTemplateModel(
-            ModelGeneratorModel generatorModel, 
-            ModelTypeAndContextModel modelTypeAndContextModel)
-        {
-            bool isLayoutSelected = (generatorModel.UseDefaultLayout 
-                                     || !String.IsNullOrEmpty(generatorModel.LayoutPage));
-
-            ViewGeneratorTemplateModel templateModel = new ViewGeneratorTemplateModel()
-            {
-                ViewDataTypeName = modelTypeAndContextModel?.ModelType?.FullName,
-                ViewDataTypeShortName = modelTypeAndContextModel?.ModelType?.Name,
-                ViewName = generatorModel.ViewName,
-                LayoutPageFile = generatorModel.LayoutPage,
-                IsLayoutPageSelected = isLayoutSelected,
-                IsPartialView = false,
-                ReferenceScriptLibraries = generatorModel.ReferenceScriptLibraries,
-                ModelMetadata = modelTypeAndContextModel?.ContextProcessingResult?.ModelMetadata,
-                JQueryVersion = "1.10.2" //Todo
-            };
-
-            return templateModel;
-        }
-
-
 
         protected async Task AddRequiredFiles(ModelGeneratorModel generatorModel)
         {

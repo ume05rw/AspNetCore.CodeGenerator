@@ -1,6 +1,8 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+// got this code from: https://github.com/aspnet/Scaffolding/blob/1.1.3/src/Microsoft.VisualStudio.Web.CodeGenerators.Mvc/ModelMetadataUtilities.cs
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;

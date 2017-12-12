@@ -1,4 +1,4 @@
-﻿@inherits Microsoft.VisualStudio.Web.CodeGeneration.Templating.RazorTemplateBase
+@inherits Microsoft.VisualStudio.Web.CodeGeneration.Templating.RazorTemplateBase
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
-// 書き加えたぜ。
 
 @{
     foreach (var namespaceName in Model.RequiredNamespaces)
@@ -109,44 +107,6 @@ namespace @Model.ControllerNamespace
                 return NotFound();
             }
 
-            return View(@Model.ModelVariable);
-        }
-
-        // GET: @routePrefix/Create
-        public IActionResult Create()
-        {
-@{
-    foreach (var property in relatedProperties.Values)
-    {
-            @:ViewData["@(property.ForeignKeyPropertyNames[0])"] = new SelectList(_context.@property.EntitySetName, "@property.PrimaryKeyNames[0]", "@property.DisplayPropertyName");
-    }
-}            return View();
-        }
-
-        // POST: @routePrefix/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("@bindString")] @Model.ModelTypeName @Model.ModelVariable)
-        {
-            if (ModelState.IsValid)
-            {
-@{
-    if (!string.IsNullOrEmpty(primaryKeyType) && IsGuid(primaryKeyType))
-    {
-                @:@(Model.ModelVariable).@primaryKeyName = Guid.NewGuid();
-    }
-                @:_context.Add(@Model.ModelVariable);
-                @:await _context.SaveChangesAsync();
-}                return RedirectToAction("Index");
-            }
-@{
-    foreach (var property in relatedProperties.Values)
-    {
-            @:ViewData["@(property.ForeignKeyPropertyNames[0])"] = new SelectList(_context.@property.EntitySetName, "@property.PrimaryKeyNames[0]", "@property.DisplayPropertyName", @(Model.ModelVariable).@property.ForeignKeyPropertyNames[0]);
-    }
-}
             return View(@Model.ModelVariable);
         }
 

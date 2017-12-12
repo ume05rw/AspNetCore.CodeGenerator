@@ -62,11 +62,38 @@ namespace XbScaffolder {
         }
         
         /// <summary>
+        ///   https://github.com/aspnet/Scaffolding/blob/1.1.3/src/Microsoft.VisualStudio.Web.CodeGenerators.Mvc/MessageStrings.resx に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string _Got_This_Code_From_ {
+            get {
+                return ResourceManager.GetString("_Got_This_Code_From_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   AreaName cannot be empty に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string AreaNameRequired {
+            get {
+                return ResourceManager.GetString("AreaNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Controller Name is required に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ControllerNameRequired {
             get {
                 return ResourceManager.GetString("ControllerNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   DbContextName cannot be empty に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string DbContextNameRequired {
+            get {
+                return ResourceManager.GetString("DbContextNameRequired", resourceCulture);
             }
         }
         
@@ -94,6 +121,15 @@ namespace XbScaffolder {
         internal static string InvalidNamespaceName {
             get {
                 return ResourceManager.GetString("InvalidNamespaceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ModelName cannot be empty に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModelNameRequired {
+            get {
+                return ResourceManager.GetString("ModelNameRequired", resourceCulture);
             }
         }
         
@@ -152,7 +188,7 @@ namespace XbScaffolder {
         }
         
         /// <summary>
-        ///   The ViewName cannot be empty&quot; に類似しているローカライズされた文字列を検索します。
+        ///   ViewName cannot be empty に類似しているローカライズされた文字列を検索します。
         /// </summary>
         internal static string ViewNameRequired {
             get {

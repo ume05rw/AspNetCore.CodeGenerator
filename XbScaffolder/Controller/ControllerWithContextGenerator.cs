@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+// got this code from: https://github.com/aspnet/Scaffolding/blob/1.1.3/src/Microsoft.VisualStudio.Web.CodeGenerators.Mvc/Controller/ControllerWithContextGenerator.cs
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -24,8 +26,10 @@ namespace XbScaffolder.Controller
         private string _areaName = string.Empty;
         private readonly List<string> _views = new List<string>()
         {
+            //"Create",
             "Edit",
             "Details",
+            //"Delete",
             "List"
         };
 
@@ -65,7 +69,8 @@ namespace XbScaffolder.Controller
                 controllerGeneratorModel,
                 EntityFrameworkService,
                 ModelTypesLocator,
-                _areaName);
+                _areaName
+            );
 
             if (string.IsNullOrEmpty(controllerGeneratorModel.ControllerName))
             {
@@ -75,6 +80,7 @@ namespace XbScaffolder.Controller
             var namespaceName = string.IsNullOrEmpty(controllerGeneratorModel.ControllerNamespace)
                 ? GetDefaultControllerNamespace(controllerGeneratorModel.RelativeFolderPath)
                 : controllerGeneratorModel.ControllerNamespace;
+
             var templateModel = new ControllerWithContextTemplateModel(modelTypeAndContextModel.ModelType, modelTypeAndContextModel.DbContextFullName)
             {
                 ControllerName = controllerGeneratorModel.ControllerName,
@@ -84,21 +90,33 @@ namespace XbScaffolder.Controller
                 ModelMetadata = modelTypeAndContextModel.ContextProcessingResult.ModelMetadata
             };
 
-            await CodeGeneratorActionsService.AddFileFromTemplateAsync(outputPath, GetTemplateName(controllerGeneratorModel), TemplateFolders, templateModel);
+            await CodeGeneratorActionsService.AddFileFromTemplateAsync(
+                outputPath, 
+                GetTemplateName(controllerGeneratorModel), 
+                TemplateFolders, 
+                templateModel
+            );
             Logger.LogMessage("Added Controller : " + outputPath.Substring(ApplicationInfo.ApplicationBasePath.Length));
 
-            await GenerateViewsIfRequired(controllerGeneratorModel, modelTypeAndContextModel, templateModel.ControllerRootName);
+            await GenerateViewsIfRequired(
+                controllerGeneratorModel, 
+                modelTypeAndContextModel, 
+                templateModel.ControllerRootName
+            );
 
-            if (modelTypeAndContextModel.ContextProcessingResult.ContextProcessingStatus == ContextProcessingStatus.ContextAddedButRequiresConfig)
+            if (modelTypeAndContextModel.ContextProcessingResult.ContextProcessingStatus 
+                == ContextProcessingStatus.ContextAddedButRequiresConfig)
             {
                 throw new Exception(string.Format("{0} {1}" ,MessageStrings.ScaffoldingSuccessful_unregistered,
                     MessageStrings.Scaffolding_additionalSteps));
             }
         }
 
-        private async Task GenerateViewsIfRequired(CommandLineGeneratorModel controllerGeneratorModel,
+        private async Task GenerateViewsIfRequired(
+            CommandLineGeneratorModel controllerGeneratorModel,
             ModelTypeAndContextModel modelTypeAndContextModel,
-            string controllerRootName)
+            string controllerRootName
+        )
         {
             if (!controllerGeneratorModel.IsRestController && !controllerGeneratorModel.NoViews)
             {
@@ -129,7 +147,12 @@ namespace XbScaffolder.Controller
                     var viewName = viewTemplate == "List" ? "Index" : viewTemplate;
                     viewAndTemplateNames.Add(viewName, viewTemplate);
                 }
-                await viewGenerator.GenerateViews(viewAndTemplateNames, viewGeneratorModel, modelTypeAndContextModel, viewBaseOutputPath);
+                await viewGenerator.GenerateViews(
+                    viewAndTemplateNames, 
+                    viewGeneratorModel, 
+                    modelTypeAndContextModel, 
+                    viewBaseOutputPath
+                );
                 await layoutDependencyInstaller.InstallDependencies();
             }
         }
