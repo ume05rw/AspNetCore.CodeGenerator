@@ -1,10 +1,12 @@
 @inherits Microsoft.VisualStudio.Web.CodeGeneration.Templating.RazorTemplateBase
+@using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Xb.AspNetCore.Models.ViewModels.Abstracts;
 @{
     foreach (var namespaceName in Model.RequiredNamespaces)
     {
@@ -16,5 +18,29 @@ namespace @(Model.ClassNamespace)
 {
     public class @(Model.ModelName) : ViewModelBase
     {
+        //[Display(Name = "Display Name")]
+
+        // DataType: DateTime, Date, Time, Duration, PhoneNumber, Currency, Text, Html, 
+        //           MultilineText, EmailAddress, Password, Url, ImageUrl, CreditCard, PostalCode, Upload
+        //[DataType(DataType.Password)] 
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+
+        //[Required]
+        //[StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        //[Range(1, 100)]
+        //[Range(typeof(DateTime), "1966-1-1", "2020-1-1")]
+        //[RegularExpression(@@"^[A-Z]+[a-zA-Z''-'\s]*$")]
+        //[Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+
+        //[Phone]
+        //[Url]
+        //[EmailAddress]
+        //[CreditCard]
+
+
+@foreach (PropertyMetadata property in Model.ModelMetadata.Properties)
+{ 
+        @:public @property.TypeName @property.PropertyName { get; set; }
+}
     }
 }
